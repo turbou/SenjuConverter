@@ -1,0 +1,67 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.7
+
+version = '1.0.0'
+
+def defaultEncoding = 'UTF-8'
+    tasks.withType(AbstractCompile) each { it.options.encoding = defaultEncoding }
+
+compileJava {
+    options.encoding = defaultEncoding
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'commons-io', name: 'commons-io', version: '2.4'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
+    compile group: 'commons-logging', name: 'commons-logging', version: '1.2'
+    compile group: 'log4j', name: 'log4j', version: '1.2.17'
+
+    compile group: 'org.eclipse.core', name: 'commands', version: '3.3.0-I20070605-0010', transitive: false
+    compile group: 'org.eclipse.equinox', name: 'common', version: '3.3.0-v20070426', transitive: false
+    compile group: 'org.eclipse.ui', name: 'ide', version: '3.3.0-I20070620', transitive: false
+    compile group: 'org.eclipse.ui', name: 'workbench', version: '3.3.0-I20070608-1100', transitive: false
+    compile group: 'org.eclipse', name: 'jface', version: '3.3.0-I20070606-0010', transitive: false
+
+    compile group: 'org.jsoup', name: 'jsoup', version: '1.7.2'
+
+    compile group: 'dom4j', name: 'dom4j', version: '1.6.1'
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.6'
+    compile group: 'commons-digester', name: 'commons-digester', version: '1.7'
+    compile group: 'commons-httpclient', name: 'commons-httpclient', version: '3.1'
+
+    compile group: 'org.eclipse.swt', name: 'org.eclipse.swt.win32.win32.x86_64', version: '4.3'
+    //compile group: 'org.eclipse.swt', name: 'org.eclipse.swt.win32.win32.x86', version: '4.3'
+}
+
+test {
+    systemProperties 'property': 'value'
+}
+
+task copyToLib(type: Copy) {
+    into "$buildDir/output/lib"
+    from configurations.runtime
+}
+
+jar {
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA' 
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Quickstart',
+                   'Implementation-Version': version
+        attributes 'Main-Class': 'jp.co.tabocom.senjuconverter.Main'
+    }
+    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+}
+
+uploadArchives {
+    repositories {
+       flatDir {
+           dirs 'repos'
+       }
+    }
+}
