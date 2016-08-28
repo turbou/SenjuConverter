@@ -10,7 +10,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import jp.co.tabocom.senjuconverter.Main;
 import jp.co.tabocom.senjuconverter.model.RuleDefinition;
 import jp.co.tabocom.senjuconverter.model.Site;
 import jp.co.tabocom.senjuconverter.preference.PreferenceConstants;
@@ -195,11 +194,11 @@ public class NetValidDateDialog extends Dialog {
         super.configureShell(newShell);
         newShell.setText("定義有効開始日指定");
         // アイコンセットアップ
-        Image[] imageArray = new Image[3];
-        imageArray[0] = new Image(newShell.getDisplay(), Main.class.getClassLoader().getResourceAsStream("icon16.png"));
-        imageArray[1] = new Image(newShell.getDisplay(), Main.class.getClassLoader().getResourceAsStream("icon32.png"));
-        imageArray[2] = new Image(newShell.getDisplay(), Main.class.getClassLoader().getResourceAsStream("icon48.png"));
-        newShell.setImages(imageArray);
+//        Image[] imageArray = new Image[3];
+//        imageArray[0] = new Image(newShell.getDisplay(), Main.class.getClassLoader().getResourceAsStream("icon16.png"));
+//        imageArray[1] = new Image(newShell.getDisplay(), Main.class.getClassLoader().getResourceAsStream("icon32.png"));
+//        imageArray[2] = new Image(newShell.getDisplay(), Main.class.getClassLoader().getResourceAsStream("icon48.png"));
+//        newShell.setImages(imageArray);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
