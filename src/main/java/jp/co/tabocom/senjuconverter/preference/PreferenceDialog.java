@@ -14,7 +14,7 @@ import javafx.scene.text.Text;
 
 public class PreferenceDialog extends Dialog<Settings> {
 
-    public PreferenceDialog() {
+    public PreferenceDialog(Settings curSettings) {
         setTitle("千手変換ツール");
         setHeaderText("基本設定");
         getDialogPane().setPrefSize(720, 320);
@@ -53,6 +53,7 @@ public class PreferenceDialog extends Dialog<Settings> {
         otherGridPane.add(new Label("デフォルト千手ディレクトリ："), 0, 0, 1, 1);
         otherGridPane.add(defaultSnjDirTxt, 1, 0, 1, 1);
         otherGridPane.add(new Button("参照"), 2, 0, 1, 1);
+        defaultSnjDirTxt.setText(curSettings.getDefaultSnjDir());
 
         TextField defaultOutDirTxt = new TextField();
         defaultOutDirTxt.setPromptText("C:\\Users\\oyoyo\\Desktop");
@@ -62,19 +63,19 @@ public class PreferenceDialog extends Dialog<Settings> {
 
         grid.add(otherGridPane, 0, 1, 3, 1);
 
-//        Group group1 = new Group();
-        GridPane    grid2        = new GridPane();
-        Text        gridNode1   = new Text("【その１abc】") ;
-        Text        gridNode2   = new Text("【その２】") ;
-        Text        gridNode3   = new Text("【その３】") ;
-        Text        gridNode4   = new Text("【その４】") ;
-        Text        gridNode5   = new Text("【その５】") ;
-        grid2.add( gridNode1 , 0 , 0 , 1 , 1 );
-        grid2.add( gridNode2 , 1 , 0 , 1 , 1 );
-        grid2.add( gridNode3 , 0 , 1 , 2 , 1 );
-        grid2.add( gridNode4 , 2 , 1 , 1 , 2 );
-        grid2.add( gridNode5 , 0 , 2 , 2 , 1 );
-//        group1.getChildren().add(grid2);
+        // Group group1 = new Group();
+        GridPane grid2 = new GridPane();
+        Text gridNode1 = new Text("【その１abc】");
+        Text gridNode2 = new Text("【その２】");
+        Text gridNode3 = new Text("【その３】");
+        Text gridNode4 = new Text("【その４】");
+        Text gridNode5 = new Text("【その５】");
+        grid2.add(gridNode1, 0, 0, 1, 1);
+        grid2.add(gridNode2, 1, 0, 1, 1);
+        grid2.add(gridNode3, 0, 1, 2, 1);
+        grid2.add(gridNode4, 2, 1, 1, 2);
+        grid2.add(gridNode5, 0, 2, 2, 1);
+        // group1.getChildren().add(grid2);
         grid2.setStyle("-fx-border-color: blue green red darkOliveGreen;");
         TextField proxyHost = new TextField();
         proxyHost.setPrefWidth(400);
@@ -84,18 +85,18 @@ public class PreferenceDialog extends Dialog<Settings> {
         TextField deliveryDefUrl = new TextField();
         deliveryDefUrl.setPrefWidth(450);
         deliveryDefUrl.setPromptText("http://apf-devcloud/stash/projects/ALLAPF/repos/testdeliverydef/browse/");
-//        grid.add(new Label("Proxy:"), 0, 0, 1, 1);
-//        grid.add(proxyHost, 1, 0, 1, 1);
-//        grid.add(proxyPort, 2, 0, 1, 1);
-//        grid.add(new Label("DeliveryDef URL:"), 0, 1, 1, 1);
-//        grid.add(deliveryDefUrl, 1, 1, 2, 1);
-//        grid.add(gridPane, 0, 2, 2, 1);
+        // grid.add(new Label("Proxy:"), 0, 0, 1, 1);
+        // grid.add(proxyHost, 1, 0, 1, 1);
+        // grid.add(proxyPort, 2, 0, 1, 1);
+        // grid.add(new Label("DeliveryDef URL:"), 0, 1, 1, 1);
+        // grid.add(deliveryDefUrl, 1, 1, 2, 1);
+        // grid.add(gridPane, 0, 2, 2, 1);
         getDialogPane().setContent(grid);
 
         setResultConverter(dialogButton -> {
             if (dialogButton == saveButtonType) {
                 Settings settings = new Settings();
-                settings.setDefaultSnjDir("oyoyo");
+                settings.setDefaultSnjDir(defaultSnjDirTxt.getText());
                 return settings;
             }
             return null;

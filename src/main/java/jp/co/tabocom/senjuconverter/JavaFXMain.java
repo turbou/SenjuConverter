@@ -2,9 +2,15 @@ package jp.co.tabocom.senjuconverter;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 
 import javafx.application.Application;
 import javafx.collections.ListChangeListener;
@@ -33,7 +39,10 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextFlow;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import jp.co.tabocom.senjuconverter.preference.PreferenceConstants;
 import jp.co.tabocom.senjuconverter.preference.PreferenceDialog;
 import jp.co.tabocom.senjuconverter.preference.Settings;
 
@@ -66,8 +75,13 @@ public class JavaFXMain extends Application {
 
     private StringBuilder buffer;
 
+    private Properties properties;
+    private Settings settings;
+    public static final String TOOL_PROPERTIES_FILE = "senjutool.properties";
+
     @Override
     public void start(Stage stage) throws Exception {
+        loadPreferences();
         stage.setTitle("千手変換ツール (v1.0.0)");
         stage.getIcons().add(new Image("icon16.png"));
         stage.getIcons().add(new Image("icon32.png"));
@@ -82,6 +96,25 @@ public class JavaFXMain extends Application {
 
         impSjTxtButton = new Button("千手データ取り込み（増幅・変換対象）");
         impSjTxtButton.setStyle("-fx-font-size: 13; -fx-font-family: Meiryo UI;");
+        impSjTxtButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                FileChooser dialog = new FileChooser();
+                dialog.setTitle("千手オフライザファイルを選択してください。");
+                dialog.getExtensionFilters().add(new ExtensionFilter("Text Files", "*.txt"));
+                String defaultDir = properties.getProperty(PreferenceConstants.DEFAULT_SNJ_DIR);
+                if (defaultDir == null || defaultDir.isEmpty()) {
+                    dialog.setInitialDirectory(new File("C:\\"));
+                } else {
+                    dialog.setInitialDirectory(new File(defaultDir));
+                }
+                List<File> selectedFiles = dialog.showOpenMultipleDialog(stage);
+                if (selectedFiles == null) {
+                    // ファイルが選択されなければそのまま終わり
+                    return;
+                }
+            }
+        });
         impRuleButton = new Button("変換ルールファイル取り込み");
         impRuleButton.setStyle("-fx-font-size: 14; -fx-font-family: Meiryo UI;");
         showRuleButton = new Button("定義確認");
@@ -95,10 +128,13 @@ public class JavaFXMain extends Application {
         settingButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                PreferenceDialog dialog = new PreferenceDialog();
+                Settings curSettings = new Settings();
+                curSettings.setDefaultSnjDir(properties.getProperty(PreferenceConstants.DEFAULT_SNJ_DIR));
+                PreferenceDialog dialog = new PreferenceDialog(curSettings);
                 Optional<Settings> result = dialog.showAndWait();
                 result.ifPresent(settings -> {
-                    System.out.println(settings.getDefaultSnjDir());
+                    properties.setProperty(PreferenceConstants.DEFAULT_SNJ_DIR, settings.getDefaultSnjDir());
+                    savePreferences();
                 });
             }
         });
@@ -261,6 +297,27 @@ public class JavaFXMain extends Application {
         root.setCenter(gridPane);
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void loadPreferences() {
+        this.properties = new Properties();
+        try {
+            InputStream inputStream = new FileInputStream(TOOL_PROPERTIES_FILE);
+            this.properties.load(inputStream);
+            inputStream.close();
+            this.settings.setDefaultSnjDir(properties.getProperty(PreferenceConstants.DEFAULT_SNJ_DIR));
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    private void savePreferences() {
+        try {
+            OutputStream outputStream = new FileOutputStream(TOOL_PROPERTIES_FILE);
+            this.properties.store(outputStream, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
